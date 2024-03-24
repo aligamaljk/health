@@ -20,7 +20,7 @@ const onErrorHandler = (error) => {
     message.error(
       "We're sorry. Something went wrong. A team of highly trained developers has been dispatched to handle this situation!"
       // "حدث خطأ ما الرجاء المحاولة مرة اخرى "
-      // "برجاء المحاولة مرة اخرى و التصال بالانترنت"
+      // "برجاء المحاولة مرة اخرى و الاتصال بالانترنت"
       );
   }
   return error;

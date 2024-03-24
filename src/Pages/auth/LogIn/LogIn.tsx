@@ -3,13 +3,15 @@ import { Form, Button, App, Input, Card } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 // import { setCurrentUser } from "../../../services/store/reducers/usercers/user";
-import { setStoredToken, setStoredUser } from '../../../services/user-storage';
+import {
+  setStoredToken,
+  setStoredUser
+} from '../../../services/user-storage';
 import './Login.scss';
 import { setCurrentUser } from '../../../services/store/reducers/user';
-import { authLogin } from '../../../network/auth';
+import { authLogin } from '../../../services/network/auth';
 import { ITranslation } from '../../../types';
 import { IoIosArrowForward } from 'react-icons/io';
-
 
 const LogIn: React.FC<ITranslation> = ({ t }) => {
   const navigate = useNavigate();
@@ -41,47 +43,49 @@ const LogIn: React.FC<ITranslation> = ({ t }) => {
   // });
 
   return (
-    <div className="login">
-      <div className="login-form-container">
-        <div className="section-header">
-          <h1 className="title">{t.LogIn}</h1>
-          <div className="link">
-            <Link to="/">{t.home}</Link> <IoIosArrowForward />
+    <div className='login'>
+      <div className='login-form-container'>
+        <div className='section-header'>
+          <h1 className='title'>{t.LogIn}</h1>
+          <div className='link'>
+            <Link to='/'>{t.home}</Link> <IoIosArrowForward />
             {t.LogIn}
           </div>
         </div>
-        <Card className="login-form" loading={false}>
-          <h3 className="title-form">
+        <Card className='login-form' loading={false}>
+          <h3 className='title-form'>
             {t.logInTitle} <span>{t.logo}</span>{' '}
           </h3>
           <Form
-            layout="vertical"
-            name="login"
+            layout='vertical'
+            name='login'
             onFinish={onAuthLogin}
-            className="login-form-body"
+            className='login-form-body'
           >
             <Form.Item
-              name="username"
+              name='username'
               label={t.username}
               rules={[{ required: true, message: t.requiredName }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              name="password"
+              name='password'
               label={t.password}
-              rules={[{ required: true, message: t.requiredPassword }]}
+              rules={[
+                { required: true, message: t.requiredPassword }
+              ]}
             >
               <Input.Password />
             </Form.Item>
-            <p className="account-register-row">
+            <p className='account-register-row'>
               <Link
-                to="/forgot-password"
+                to='/forgot-password'
                 style={{
                   color: '#294151',
                   fontSize: '16px',
                   fontWeight: 500,
-                  letterSpacing: '.16px',
+                  letterSpacing: '.16px'
                 }}
               >
                 {' '}
@@ -90,30 +94,30 @@ const LogIn: React.FC<ITranslation> = ({ t }) => {
             </p>
             <Form.Item>
               <Button
-                type="primary"
-                className="login-form-button"
-                htmlType="submit"
+                type='primary'
+                className='login-form-button'
+                htmlType='submit'
                 loading={false}
               >
                 {t.LogIn}
               </Button>
             </Form.Item>
             <p
-              className="account-register-row"
+              className='account-register-row'
               style={{
                 textAlign: 'center',
                 letterSpacing: '1px',
-                fontSize: '16px',
+                fontSize: '16px'
               }}
             >
               {t.sinUpTitle}{' '}
               <Link
-                to="/register"
+                to='/register'
                 style={{
                   color: '#612166',
                   cursor: 'pointer',
                   fontWeight: 600,
-                  margin: '0 4px',
+                  margin: '0 4px'
                 }}
               >
                 {t.sinUp}

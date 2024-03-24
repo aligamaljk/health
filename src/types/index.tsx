@@ -72,3 +72,15 @@ export interface ITranslation {
     sports?: string;
   };
 }
+
+enum LangsType {
+  en = 'en',
+  ar = 'ar'
+}
+
+export interface StoreType {
+  user: {
+    currentUser: null;
+    currentLang: LangsType;
+  };
+}

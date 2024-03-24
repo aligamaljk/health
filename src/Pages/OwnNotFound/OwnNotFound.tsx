@@ -1,7 +1,7 @@
-import React from 'react'
+import { ITranslation } from '../../types';
 
-const OwnNotFound = ({t} : {t : any}) => {
+const OwnNotFound = ({ t }: ITranslation) => {
   return <h1>{t.OwnNotFound}</h1>;
-}
+};
 
-export default OwnNotFound
+export default OwnNotFound;
