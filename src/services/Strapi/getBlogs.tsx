@@ -17,7 +17,7 @@ export async function getBlogs() {
     })
     .catch((e) => {
       console.error(e.message);
-      return null;
+      throw new Error(e.message);
     });
 
   return res;

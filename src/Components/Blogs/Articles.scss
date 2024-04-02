@@ -17,6 +17,17 @@
     padding-right: 15px;
     max-width: 1200px;
     // width: 100%;
+    .loader-container {
+      padding: 50px 0px;
+      h2 {
+        font-size: 5rem;
+        text-align: center;
+      }
+    }
+    .empty-error {
+      padding: 50px 0px;
+    }
+
     .cards {
       grid-gap: 4rem;
       display: grid;
