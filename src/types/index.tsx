@@ -194,7 +194,31 @@ export interface ITranslation {
     titphone?: string;
     requiredProtein?: string;
     weightTarget?: string;
+    errorSin?: string;
+    errorSin2?: string;
+    checkEmail?: string;
+    addArticleSuccess?: string;
+    image?: string;
+    pleaseUpload?: string;
+    titleEn?: string;
+    titleEnRequired?: string;
+    titleAr?: string;
+    titleArRequired?: string;
+    authorEn?: string;
+    authorEnRequired?: string;
+    authorAr?: string;
+    authorArRequired?: string;
+    addArticleEn?: string;
+    addArticleAr?: string;
+    requiredAddArticleEn?: string;
+    addArticleEnRequired?: string;
+    addArticleArRequired?: string;
+    addArticle?: string;
+    requiredImage?: string;
   };
+  AddSport?: string;
+  requiredAddSport?: string;
+  addSuccess?: string;
 }
 
 export enum LangsType {
@@ -252,6 +276,8 @@ export interface fileType {
 }
 
 export interface fileUploadType {
+  originFileObj: Blob | Uint8Array | ArrayBuffer;
+  fileList: fileUploadType[];
   uid: string;
   lastModified: number;
   lastModifiedDate: Date;
@@ -279,14 +305,17 @@ export interface ProductImagesType {
 }
 
 export interface userProfileType {
-  ProductImages: ProductImagesType;
-  age: string;
-  categoryProduct: number[];
-  description: string | null;
-  gender: number;
-  height: string;
-  name: string;
-  weight: string;
+  id: string;
+  image?: ProductImagesType | undefined;
+  ProductImages?: ProductImagesType;
+  userImages?: ProductImagesType | undefined;
+  age?: string;
+  categoryProduct?: number[];
+  description?: string | null;
+  gender?: number;
+  height?: string;
+  name?: string;
+  weight?: string;
 }
 
 export interface ArticleType {
@@ -297,4 +326,21 @@ export interface ArticleType {
   desShow: string;
   image: string;
   content: string[];
+}
+
+
+export interface UserInput {
+  email?: string;
+  password?: string;
+  name?: string;
+  // add other properties as needed
+}
+export interface TypesArticle {
+  image: fileUploadType;
+  titleEn: string;
+  titleAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  authorEn: string;
+  authorAr: string;
 }

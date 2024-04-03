@@ -35,27 +35,31 @@ const Calories: React.FC<ITranslation> = ({ t }) => {
     setMore(more);
     setBmr((10 * weight + 6.25 * height - 5 * age) * exercise);
 
-    const bmrless = more === 'less' ? bmr - 500 : bmr;
-    setBmLess(bmrless);
-    if (burn === 'more' || burn === 'week') {
-      setCaloriesMor({
-        carbs: (bmrless * 25) / 100 / 4,
-        protein: (bmrless * 40) / 100 / 4,
-        fat: (bmrless * 35) / 100 / 9
-      });
-    } else if (burn === 'medium' || burn === 'less') {
-      setCaloriesMed({
-        carbs: (bmrless * 40) / 100 / 4,
-        protein: (bmrless * 30) / 100 / 4,
-        fat: (bmrless * 30) / 100 / 9
-      });
-    } else if (burn === 'high' || burn === 'stability') {
-      setCaloriesHigh({
-        carbs: (bmrless * 55) / 100 / 4,
-        protein: (bmrless * 20) / 100 / 4,
-        fat: (bmrless * 25) / 100 / 9
-      });
-    }
+    setBmLess(bmr  );
+    // if (burn === 'more' || burn === 'week') {
+      // setCaloriesMor({
+      //   carbs: (bmr * 25) / 100 / 4,
+      //   protein: (bmr * 40) / 100 / 4,
+      //   fat: (bmr * 35) / 100 / 9
+      // });
+    // } else if (burn === 'medium' || burn === 'less') {
+    //   setCaloriesMed({
+    //     carbs: (bmr * 40) / 100 / 4,
+    //     protein: (bmr * 30) / 100 / 4,
+    //     fat: (bmr * 30) / 100 / 9
+    //   });
+    // } else if (burn === 'high' || burn === 'stability') {
+    //   setCaloriesHigh({
+    //     carbs: (bmr * 55) / 100 / 4,
+    //     protein: (bmr * 20) / 100 / 4,
+    //     fat: (bmr * 25) / 100 / 9
+    //   });
+    // }
+    setCaloriesMor({
+      carbs: (bmr * 25) / 100 / 4,
+      protein: (bmr * 40) / 100 / 4,
+      fat: (bmr * 35) / 100 / 9
+    });
   };
 
   return (
@@ -193,13 +197,13 @@ const Calories: React.FC<ITranslation> = ({ t }) => {
                       placeholder={t.requiredGoal}
                       onChange={(value) => setMore(value)}
                     >
-                      <Select.Option value={'more'}>
+                      <Select.Option value='more'>
                         {t.moreCal}
                       </Select.Option>
-                      <Select.Option value={'less'}>
+                      <Select.Option value='less'>
                         {t.lessCal}
                       </Select.Option>
-                      <Select.Option value={'stability'}>
+                      <Select.Option value='stability'>
                         {t.stability}
                       </Select.Option>
                     </Select>

@@ -1,23 +1,31 @@
 import React from 'react';
 import { Form, Button, Input, Card, message } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../LogIn/Login.scss';
-import { ITranslation } from '../../../types';
+import { ITranslation, UserInput } from '../../../types';
 import { IoIosArrowForward } from 'react-icons/io';
-import { useDispatch } from 'react-redux';
-import { setCurrentUser } from '../../../services/store/reducers/user';
-import { setStoredUser } from '../../../services/user-storage';
+// import { useDispatch } from 'react-redux';
+// import { setCurrentUser } from '../../../services/store/reducers/user';
+// import { setStoredUser } from '../../../services/user-storage';
+import { doForgetPassword } from '../../../Firebase/auth';
 const ForgotPassword: React.FC<ITranslation> = ({ t }) => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch();
 
-  const onAuthForgotPassword = (values: any) => {
-    // console.log('Success:', values);
-    dispatch(setCurrentUser(values));
-    setStoredUser(values.name);
-    message.success(t.successLog + ' ' + values.name);
-    navigate('/profile');
-  };
+    const onAuthForgotPassword = (values: UserInput) => {
+       const email = values?.email || '';
+      doForgetPassword(email)
+        .then(() => {
+          message.success(t.checkEmail);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      // dispatch(setCurrentUser(values));
+      // setStoredUser(values.name);
+      // message.success(t.successLog + ' ' + values.name);
+      // navigate('/profile');
+    };
 
   return (
     <>
@@ -58,7 +66,7 @@ const ForgotPassword: React.FC<ITranslation> = ({ t }) => {
               onFinish={onAuthForgotPassword}
               className='login-form-body'
             >
-              <Form.Item
+              {/* <Form.Item
                 name='name'
                 label={t.name}
                 rules={[{ required: true, message: t.requiredName }]}
@@ -69,7 +77,15 @@ const ForgotPassword: React.FC<ITranslation> = ({ t }) => {
                   min={3}
                   max={10}
                 />
-              </Form.Item>
+            </Form.Item>
+             */}
+              <Form.Item
+                name='email'
+                label={t.email}
+                rules={[{ required: true, message: t.requiredEmail }]}
+              >
+                <Input placeholder={t.email} type='email' />
+                </Form.Item>
               <Form.Item
                 name='phone'
                 label={t.titphone}

@@ -3,7 +3,7 @@ import OwnNotFound from '../Pages/OwnNotFound/OwnNotFound';
 import Home from '../Components/Home/Home';
 import OwnLayout from '../Pages/OwnLayout/OwnLayout';
 import LogIn from '../Pages/auth/LogIn/LogIn';
-import { getStoredUser } from '../services/user-storage';
+import { getStoredToken } from '../services/user-storage';
 import ForgotPassword from '../Pages/auth/forgot-password/ForgotPassword';
 import SignUp from '../Pages/auth/SignUp/SignUp';
 import Contact from '../Components/Contact/Contact';
@@ -15,6 +15,7 @@ import BlogsDetails from '../Components/Blogs/BlogsDetails/BlogsDetails';
 import Bmi from '../Components/Bmi/Bmi';
 import Activities from '../Components/Activities/Activities';
 import { ITranslation } from '../types';
+import Admin from '../Pages/Admin/Admin';
 
 const RoutesWrapper = ({ t }: ITranslation) => {
   const routes = useRoutes([
@@ -41,7 +42,7 @@ const RoutesWrapper = ({ t }: ITranslation) => {
         {
           path: 'articles',
           element:
-            getStoredUser() ?
+            getStoredToken() ?
               <Articles t={t} />
             : <Navigate to='/login' replace />
         },
@@ -52,27 +53,31 @@ const RoutesWrapper = ({ t }: ITranslation) => {
         {
           path: 'calories',
           element:
-            getStoredUser() ?
+            getStoredToken() ?
               <Calories t={t} />
             : <Navigate to='/login' replace />
         },
         {
           path: 'bmi',
           element:
-            getStoredUser() ?
+            getStoredToken() ?
               <Bmi t={t} />
             : <Navigate to='/login' replace />
         },
         {
           path: 'activities',
           element:
-            getStoredUser() ?
+            getStoredToken() ?
               <Activities t={t} />
             : <Navigate to='/login' replace />
         },
         {
           path: 'profile',
           element: <Profile t={t} />
+        },
+        {
+          path: 'admin',
+          element: <Admin t={t} />
         },
         {
           path: '/login',

@@ -18,40 +18,40 @@ import {
   Input,
   message,
   Select,
+  Spin,
   Upload
 } from 'antd';
 import { TbUpload } from 'react-icons/tb';
 import {
-  getStoredAddSport,
+  clearStoredUserProfile,
+  // getStoredAddSport,
+  getStoredToken,
   getStoredUserProfile,
   setStoredAddSport,
   setStoredUserProfile
 } from '../../services/user-storage';
 import AddSport from '../AddSport/AddSport';
-
+import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { db } from '../../Firebase/Firebase';
 const Profile: React.FC<ITranslation> = ({ t }) => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const getLocalProfile = getStoredUserProfile();
+  const getLocalProfile = getStoredUserProfile() || {};
   const [fileList, setFileList] = useState<fileType[] | []>([]);
-  const [sports, setSports] = useState(getStoredAddSport());
-
-  // console.log('=============');
-  // console.log('getLocalProfile');
-  // console.log(getLocalProfile);
-  // console.log('sports');
-  // console.log(sports);
-
-  // console.log(fileList, 'fileList');
-
+  // console.log(fileList, "fileList");
+  
+  // const [sports, setSports] = useState(getStoredAddSport());
+  const [sports, setSports] = useState<AddSportType[]>();
+  const [load, setLoad] = useState<boolean>(false);
+  const [loadGet, setLoadGet] = useState<boolean>(false);
+  const [profile, setProfile] = useState<userProfileType>();
+  console.log(profile, 'profile');  
   useEffect(() => {
-    if (getLocalProfile) {
+    if (getLocalProfile && getLocalProfile.image) {
       setFileList(
-        getLocalProfile.ProductImages.fileList.map(
-          (item: fileType) => {
-            return item;
-          }
-        )
+        getLocalProfile.image.fileList.map((item: fileType) => {
+          return item;
+        })
       );
     }
   }, []);
@@ -90,51 +90,133 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
   }) => {
     setFileList(newFileList);
   };
-
-  // const check2 = [
-  //   {
-  //     label: t.swimming,
-  //     value: 1
-  //   },
-  //   {
-  //     label: t.running,
-  //     value: 2
-  //   },
-  //   {
-  //     label: t.football,
-  //     value: 3
-  //   },
-  //   {
-  //     label: t.basketball,
-  //     value: 4
-  //   },
-  //   {
-  //     label: t.gym,
-  //     value: 5
-  //   },
-  //   {
-  //     label: t.tennis,
-  //     value: 6
-  //   }
-  // ];
-
-  const check = (sports || [])?.map((item: AddSportType) => item);
-
+;
+    const colleUser = collection(db, 'user');
   const onFinish = (values: userProfileType) => {
+    setLoad(true);
     console.log(values, 'values-profile');
-    setStoredUserProfile({
-      ProductImages: values.ProductImages,
-      name: values.name,
-      age: values.age,
-      categoryProduct: values.categoryProduct,
-      gender: values.gender,
-      height: values.height,
-      weight: values.weight,
-      description: values.description
-    });
-    message.success(t.profileRegistered);
-    navigate('/');
+    if (!profile) {
+      addDoc(colleUser, {
+        token: getStoredToken(),
+        // image: values?.userImages?.fileList[0],
+        name: values.name ,
+        age: values.age,
+        categoryProduct: values.categoryProduct,
+        gender: values.gender,
+        height: values.height,
+        weight: values.weight,
+        description: values.description || '',
+        activity: sports || [],
+      }).then(() => {
+          setStoredUserProfile({
+            image: values?.userImages,
+            id: '',
+            name: values.name,
+            age: values.age,
+            categoryProduct: values.categoryProduct,
+            gender: values.gender,
+            height: values.height,
+            weight: values.weight,
+            description: values.description,
+          });
+          message.success(t.profileRegistered);
+          setLoad(false);
+          navigate('/');
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error(error.message);
+          setLoad(false);
+        });
+    } else {
+      setLoad(true);
+      const docRef = doc(db, 'user', profile?.id as string);
+      updateDoc(docRef, {
+        name: values.name,
+        age: values.age,
+        categoryProduct: values.categoryProduct,
+        gender: values.gender,
+        height: values.height,
+        weight: values.weight,
+        description: values.description,
+        activity: sports || [],
+      }).then(() => {
+           setStoredUserProfile({
+             image: values?.userImages,
+             id: '',
+             name: values.name,
+             age: values.age,
+             categoryProduct: values.categoryProduct,
+             gender: values.gender,
+             height: values.height,
+             weight: values.weight,
+             description: values.description
+           });
+          message.success('تم التعديل بنجاح');
+          setLoad(false);
+          navigate('/');
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error(error.message);
+          setLoad(false);
+        });
+    }
   };
+  const getUserProfile = () => {
+    setLoadGet(true);
+    onSnapshot(colleUser, (querySnapshot) => {
+      const data = querySnapshot.docs
+        .map((doc) => ({ ...doc.data(), id: doc.id }))
+        ?.find((item) => item?.token === getStoredToken());
+      setProfile(data);
+    });
+    setTimeout(() => {
+      setLoadGet(false);
+    }, 1000);
+    // setLoadGet(false);
+  }
+  // console.log(profile, 'filterUser');
+  useEffect(() => {
+    getUserProfile();
+  }, []);
+
+  const handleDelete = () => {
+    const docRef = doc(db, 'user', profile?.id as string);
+    deleteDoc(docRef)
+      .then(() => {
+        message.success('تم الحذف بنجاح');
+        clearStoredUserProfile();
+        setProfile(undefined);
+        form.resetFields();
+        navigate('/');
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error(error.message);
+      });
+  };
+    const check = (sports || profile?.activity)?.map(
+      (item: AddSportType) => item
+    );
+    // console.log(check, 'check');
+    
+  if(loadGet){
+    return (
+      <div className='loader'
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '70vh'
+        }}
+      >
+        <Spin tip='Loading' size='large'>
+          <div className='content' />
+        </Spin>
+      </div>
+    );
+  }
   return (
     <div className='profile'>
       <div className='section-header'>
@@ -154,25 +236,17 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
             onFinish={onFinish}
             form={form}
             initialValues={{
-              ProductImages: getLocalProfile?.ProductImages || null,
-              age: getLocalProfile?.age || null,
-              categoryProduct:
-                getLocalProfile?.categoryProduct || null,
-              description: getLocalProfile?.description || null,
-              gender: getLocalProfile?.gender || null,
-              height: getLocalProfile?.height || null,
-              name: getLocalProfile?.name || null,
-              weight: getLocalProfile?.weight || null
+              userImages: getLocalProfile?.image || null
             }}
           >
             <Col className='upload'>
               <Form.Item
-                name='ProductImages'
-                label=''
+                name='userImages'
+                label={t.uploadImage}
                 rules={[
                   {
                     required: true,
-                    message: 'يجب اضافة صور'
+                    message: t.requiredImage
                   }
                 ]}
               >
@@ -197,6 +271,7 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 name='name'
                 label={t.name}
                 rules={[{ required: true, message: t.requiredName }]}
+                initialValue={profile?.name}
               >
                 <Input placeholder={t.name} />
               </Form.Item>
@@ -204,6 +279,7 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 name='age'
                 label={t.age}
                 rules={[{ required: true, message: t.requiredAge }]}
+                initialValue={profile?.age}
               >
                 <Input type='number' placeholder={t.age} />
               </Form.Item>
@@ -213,12 +289,13 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 rules={[
                   { required: true, message: t.requiredGender }
                 ]}
+                initialValue={profile?.gender}
               >
                 <Select
                   placeholder={t.gender}
                   options={[
-                    { value: 1, label: t.male },
-                    { value: 2, label: t.female }
+                    { value: 'male', label: t.male },
+                    { value: 'female', label: t.female }
                   ]}
                 />
               </Form.Item>
@@ -228,6 +305,7 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 rules={[
                   { required: true, message: t.requiredWeight }
                 ]}
+                initialValue={profile?.weight}
               >
                 <Input placeholder={t.weight} />
               </Form.Item>
@@ -237,10 +315,15 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 rules={[
                   { required: true, message: t.requiredHeight }
                 ]}
+                initialValue={profile?.height}
               >
                 <Input placeholder='C/M' />
               </Form.Item>
-              <Form.Item name='description' label={'description'}>
+              <Form.Item
+                name='description'
+                label={'description'}
+                initialValue={profile?.description}
+              >
                 <Input.TextArea
                   rows={4}
                   autoSize={{ minRows: 3, maxRows: 7 }}
@@ -254,8 +337,9 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 rules={[
                   { required: true, message: t.requiredCategory }
                 ]}
+                initialValue={profile?.categoryProduct}
               >
-                {sports && sports?.length > 0 ?
+                {check && check?.length > 0 ?
                   <Checkbox.Group>
                     {check.map((item) => (
                       <Checkbox
@@ -294,16 +378,26 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  gap: '20px'
                 }}
               >
                 <Button
                   type='primary'
                   htmlType='submit'
                   className='btn-submit'
+                  loading={load}
                 >
-                  {getLocalProfile ? t.update : t.save}
+                  {profile ? t.update : t.save}
                   {/* {t.save} */}
+                </Button>
+                <Button
+                  type='primary'
+                  danger
+                  className='btn-submit'
+                  onClick={() => handleDelete()}
+                >
+                  Delete
                 </Button>
               </Form.Item>
             </Col>
