@@ -1,12 +1,14 @@
 import {
+  CodeType,
   HeadingType,
+  ImageType,
   LinkType,
   ListItemType,
   ListType,
   ParagraphType,
   QuoteType,
   TextType
-} from '../types/StrapiBlogs';
+} from '../../../types/articleBlocksTypes';
 
 // ======================================================================
 // console.log(
@@ -20,7 +22,7 @@ import {
 // );
 // output: <span className=" underline italic bold">asldsjfldsaslf</span>
 // ======================================================================
-export function createText(obj: TextType) {
+export function TextBlock({ obj }: { obj: TextType }) {
   let classNames = '';
   if (obj.type === 'text') {
     for (const key in obj) {
@@ -54,22 +56,26 @@ export function createText(obj: TextType) {
 // );
 // output: <a href="https://google.com">asjgladhslgadhsflads</a>
 // ==============================================================
-export function createLink(obj: LinkType) {
+export function LinkBlock({ obj }: { obj: LinkType }) {
   if (obj.type === 'link') {
     return (
-      <a href={obj.url}>{obj.children.map((el) => createText(el))}</a>
+      <a href={obj.url}>
+        {obj.children.map((el) => {
+          return <TextBlock obj={el} />;
+        })}
+      </a>
     );
   }
 
   return '';
 }
 
-export function createChild(obj: TextType | LinkType) {
+export function ChildBlock({ obj }: { obj: TextType | LinkType }) {
   if (obj.type === 'link') {
-    return createLink(obj);
+    return <LinkBlock obj={obj} />;
   }
   if (obj.type === 'text') {
-    return createText(obj);
+    return <TextBlock obj={obj} />;
   }
 
   return '';
@@ -120,9 +126,15 @@ export function createChild(obj: TextType | LinkType) {
 // };
 // output: <p><a href="https://google.com">asjgladhslgadhsflads</a> sddafdfasf <a href="https://google.com"><span class=" strikethrough underline italic bold code">asfdafasd</span></a></p>
 // ==============================================================
-export function createParagraph(obj: ParagraphType) {
+export function ParagraphBlock({ obj }: { obj: ParagraphType }) {
   if (obj.type === 'paragraph') {
-    return <p>{obj.children.map((el) => createChild(el))}</p>;
+    return (
+      <p>
+        {obj.children.map((el) => (
+          <ChildBlock obj={el} />
+        ))}
+      </p>
+    );
   }
 
   return '';
@@ -168,21 +180,51 @@ export function createParagraph(obj: ParagraphType) {
 //   <a href='https://google.com'>example</a>
 // </q>;
 // ==============================================================
-export function createQuote(obj: QuoteType) {
+export function QuoteBlock({ obj }: { obj: QuoteType }) {
   if (obj.type === 'quote') {
-    return <q>{obj.children.map((el) => createChild(el))}</q>;
+    return (
+      <div className='quote-wrapper'>
+        <q>
+          {obj.children.map((el) => (
+            <ChildBlock obj={el} />
+          ))}
+        </q>
+      </div>
+    );
   }
 
   return '';
 }
 
-function createListItem(obj: ListItemType) {
+export function CodeBlock({ obj }: { obj: CodeType }) {
+  if (obj.type === 'code') {
+    return (
+      <div className='code-wrapper'>
+        <code>
+          {obj.children.map((el) => (
+            <TextBlock obj={el} />
+          ))}
+        </code>
+      </div>
+    );
+  }
+
+  return '';
+}
+
+function ListItemBlock({ obj }: { obj: ListItemType }) {
   if (obj.type === 'list-item') {
-    return <li>{obj.children.map((el) => createChild(el))}</li>;
+    return (
+      <li>
+        {obj.children.map((el) => (
+          <ChildBlock obj={el} />
+        ))}
+      </li>
+    );
   }
   return '';
 }
-
+// ==============================================================
 // const list: ListType = {
 //   type: 'list',
 //   format: 'ordered',
@@ -279,17 +321,30 @@ function createListItem(obj: ListItemType) {
 //   </li>
 //   <li></li>
 // </ol>;
-export function createList(obj: ListType) {
+// ==============================================================
+export function ListBlock({ obj }: { obj: ListType }) {
   if (obj.format === 'ordered') {
-    return <ol>{obj.children.map((el) => createListItem(el))}</ol>;
+    return (
+      <ol>
+        {obj.children.map((el) => (
+          <ListItemBlock obj={el} />
+        ))}
+      </ol>
+    );
   }
   if (obj.format === 'unordered') {
-    return <ul>{obj.children.map((el) => createListItem(el))}</ul>;
+    return (
+      <ul>
+        {obj.children.map((el) => (
+          <ListItemBlock obj={el} />
+        ))}
+      </ul>
+    );
   }
 
   return '';
 }
-
+// ==============================================================
 // const headeing1: HeadingType = {
 //   type: 'heading',
 //   children: [
@@ -325,26 +380,90 @@ export function createList(obj: ListType) {
 //     <span class=' bold italic underline strikethrough code'>1</span>
 //   </a>
 // </h1>;
-
-export function createHeading(obj: HeadingType) {
+// ==============================================================
+export function HeadingBlock({ obj }: { obj: HeadingType }) {
   if (obj.type === 'heading') {
     switch (obj.level) {
       case 1:
-        return <h1>{obj.children.map((el) => createChild(el))}</h1>;
+        return (
+          <h1>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} />
+            ))}
+          </h1>
+        );
       case 2:
-        return <h2>{obj.children.map((el) => createChild(el))}</h2>;
+        return (
+          <h2>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} />
+            ))}
+          </h2>
+        );
       case 3:
-        return <h3>{obj.children.map((el) => createChild(el))}</h3>;
+        return (
+          <h3>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} />
+            ))}
+          </h3>
+        );
       case 4:
-        return <h4>{obj.children.map((el) => createChild(el))}</h4>;
+        return (
+          <h4>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} />
+            ))}
+          </h4>
+        );
       case 5:
-        return <h5>{obj.children.map((el) => createChild(el))}</h5>;
+        return (
+          <h5>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} />
+            ))}
+          </h5>
+        );
       case 6:
-        return <h6>{obj.children.map((el) => createChild(el))}</h6>;
+        return (
+          <h6>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} />
+            ))}
+          </h6>
+        );
       default:
         console.error('Error while createing heading element');
     }
   }
 
+  return '';
+}
+// ==============================================================
+// {
+//   type: 'image',
+//   image: {
+//     name: 'Healthy-eatin-habits-fb-cover.jpg',
+//     alternativeText: 'Healthy-eatin-habits-fb-cover.jpg',
+//     url: 'http://localhost:1337/uploads/Healthy_eatin_habits_fb_cover_f68c18383b.jpg'
+//   }
+// };
+
+// Output:
+// <div className='image-block-wrapper'>
+//   <img
+//     src='http://localhost:1337/uploads/Healthy_eatin_habits_fb_cover_f68c18383b.jpg'
+//     alt='Healthy-eatin-habits-fb-cover.jpg'
+//   />
+// </div>;
+// ==============================================================
+export function ImgBlock({ obj }: { obj: ImageType }) {
+  if (obj.type === 'image') {
+    return (
+      <div className='image-block-wrapper'>
+        <img src={obj.image.url} alt={obj.image.name} />
+      </div>
+    );
+  }
   return '';
 }

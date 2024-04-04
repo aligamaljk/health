@@ -1,92 +1,93 @@
-import { Button, Col, Form, Input, message, Upload } from "antd"
-import { fileType, fileUploadType, ITranslation, TypesArticle } from "../../types";
-import "./Admin.scss"
-import { useState } from "react";
-import {db, imgDB} from "../../Firebase/Firebase";
-import {v4} from "uuid";
-import { getDownloadURL, ref, uploadBytes} from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
-import { useNavigate } from "react-router";
+import { Button, Col, Form, Input, message, Upload } from 'antd';
+import {
+  fileType,
+  fileUploadType,
+  ITranslation,
+  TypesArticle
+} from '../../types';
+import './Admin.scss';
+import { useState } from 'react';
+import { db, imgDB } from '../../Firebase/Firebase';
+import { v4 } from 'uuid';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { addDoc, collection } from 'firebase/firestore';
+import { useNavigate } from 'react-router';
 const Admin = ({ t }: ITranslation) => {
-    const navigate = useNavigate();
-  const [fileList, setFileList] = useState<fileType[] | []>(
-    []
-  );
-  console.log(fileList, "fileList");
-  
+  const navigate = useNavigate();
+  const [fileList, setFileList] = useState<fileType[] | []>([]);
+  console.log(fileList, 'fileList');
+
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const beforeUpload = (file: fileUploadType) => {
-            const isLt2M = file.size / 1024 / 1024 < 2;
-            if (!isLt2M) {
-              message.error(
-                'حجم الصورة يجب ان يكون اقل من 2 ميجا بايت'
-              );
-              return false;
-            }
-            return isLt2M;
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('حجم الصورة يجب ان يكون اقل من 2 ميجا بايت');
+      return false;
+    }
+    return isLt2M;
   };
- const handleUpload = async ({
-   // file,
-   onSuccess
- }: {
-   // file: fileUploadType;
-   onSuccess: (ret: string) => void;
- }) => {
-   // console.log(file);
-   // console.log(onSuccess);
-   setTimeout(() => {
-     onSuccess('ok');
-   }, 0);
- };
- const handleChange = ({
-   fileList: newFileList
- }: {
-   fileList: fileType[] | [];
- }) => {
-   setFileList(newFileList);
- };
- const onFinish = async (values: TypesArticle) => {
-   setLoading(true);
-      console.log(values);
-   const {
-     image,
-     titleEn,
-     titleAr,
-     descriptionEn,
-     descriptionAr,
-     authorAr,
-     authorEn
-   } = values;
-   const imgs = ref(imgDB, `images/${v4()}`);
-   uploadBytes(imgs, image?.fileList[0]?.originFileObj)
-     .then((snapshot) => {
-       console.log(snapshot);
-       getDownloadURL(snapshot.ref).then((url) => {
-        //  console.log(url);
-        const colle = collection(db, 'articles');
-         addDoc(colle, {
-          image: url,
-          titleEn: titleEn,
-          titleAr: titleAr,
-          descriptionEn: descriptionEn,
-          descriptionAr: descriptionAr,
-          authorEn: authorEn,
-          authorAr: authorAr
+  const handleUpload = async ({
+    // file,
+    onSuccess
+  }: {
+    // file: fileUploadType;
+    onSuccess: (ret: string) => void;
+  }) => {
+    // console.log(file);
+    // console.log(onSuccess);
+    setTimeout(() => {
+      onSuccess('ok');
+    }, 0);
+  };
+  const handleChange = ({
+    fileList: newFileList
+  }: {
+    fileList: fileType[] | [];
+  }) => {
+    setFileList(newFileList);
+  };
+  const onFinish = async (values: TypesArticle) => {
+    setLoading(true);
+    console.log(values);
+    const {
+      image,
+      titleEn,
+      titleAr,
+      descriptionEn,
+      descriptionAr,
+      authorAr,
+      authorEn
+    } = values;
+    const imgs = ref(imgDB, `images/${v4()}`);
+    uploadBytes(imgs, image?.fileList[0]?.originFileObj)
+      .then((snapshot) => {
+        console.log(snapshot);
+        getDownloadURL(snapshot.ref).then((url) => {
+          //  console.log(url);
+          const colle = collection(db, 'articles');
+          addDoc(colle, {
+            image: url,
+            titleEn: titleEn,
+            titleAr: titleAr,
+            descriptionEn: descriptionEn,
+            descriptionAr: descriptionAr,
+            authorEn: authorEn,
+            authorAr: authorAr
+          });
+          message.success(t.addArticleSuccess);
+          form.resetFields();
+          setFileList([]);
+          navigate('/articles');
         });
-        message.success(t.addArticleSuccess);
-        form.resetFields();
-        setFileList([]);
-        navigate('/articles');
-       });
-       setLoading(false);
-     })
-     .catch((error) => {
-       console.log(error);
-       setLoading(false);
-       message.error(error.message);
-    });
- };
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+        message.error(error.message);
+      });
+  };
   return (
     <>
       <div className='admin'>
@@ -224,4 +225,4 @@ const Admin = ({ t }: ITranslation) => {
   );
 };
 
-export default Admin
+export default Admin;

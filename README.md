@@ -12,10 +12,10 @@ Check Google Slides file [here.](https://docs.google.com/presentation/d/17OP82Dh
 
 ## Features
 
--   **Sports Activity Tracking:** Allows users to record and track various sports activities such as walking, running, cycling, and more.
--   **Setting Health Goals:** Users can set personal health goals and track their progress towards achieving these goals.
--   **Providing Health Tips and Resources:** Offering articles and educational resources on health and wellness to help users make better health decisions.
--   **Reminders and Scheduling:** Ability to set reminders for meals, water intake, and exercise sessions to help users adhere to a healthy routine.
+- **Sports Activity Tracking:** Allows users to record and track various sports activities such as walking, running, cycling, and more.
+- **Setting Health Goals:** Users can set personal health goals and track their progress towards achieving these goals.
+- **Providing Health Tips and Resources:** Offering articles and educational resources on health and wellness to help users make better health decisions.
+- **Reminders and Scheduling:** Ability to set reminders for meals, water intake, and exercise sessions to help users adhere to a healthy routine.
 
 ## See Project Prototype!
 
@@ -37,43 +37,43 @@ Collaborating with unfamiliar team members within a restricted timeline presente
 
 ## Tools and libraries used
 
--   react
--   typeScript
--   sass
--   antd
--   react-redux
--   @reduxjs/toolkit
--   axios
--   react-router-dom
--   react-icons
--   vite
+- react
+- typeScript
+- sass
+- antd
+- react-redux
+- @reduxjs/toolkit
+- axios
+- react-router-dom
+- react-icons
+- vite
 
 ## Getting Started
 
 1. Clone this repository.
 
-    ```bash
-    git clone https://github.com/mahmoud-mohsen-dev/sihtk-bilamsa.git
-    ```
+   ```bash
+   git clone https://github.com/mahmoud-mohsen-dev/sihtk-bilamsa.git
+   ```
 
 2. Navigate to the Project Directory:
-    ```bash
-    cd sihtk-bilamsa
-    ```
+   ```bash
+   cd sihtk-bilamsa
+   ```
 3. Install Dependencies:
 
-    ```bash
-     npm install
-    ```
+   ```bash
+    npm install
+   ```
 
 4. Start the Development Server:
 
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
 
 5. Open in your Browser:
 
-    Open your web browser and go to http://localhost:5173 to see the app in action.
+   Open your web browser and go to http://localhost:5173 to see the app in action.
 
 _Now, sihtk blamsa is up and running on your local machine._

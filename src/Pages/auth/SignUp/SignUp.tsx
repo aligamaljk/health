@@ -1,36 +1,39 @@
-import React, { useState } from 'react'
-import { Form, Button,  Input, Card, message } from 'antd';
+import React, { useState } from 'react';
+import { Form, Button, Input, Card, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import '../LogIn/Login.scss';
 import { ITranslation, UserInput } from '../../../types';
 import { IoIosArrowForward } from 'react-icons/io';
 import { setCurrentUser } from '../../../services/store/reducers/user';
-import { setStoredToken, setStoredUser } from '../../../services/user-storage';
+import {
+  setStoredToken,
+  setStoredUser
+} from '../../../services/user-storage';
 import { useDispatch } from 'react-redux';
-import { doCreateUserWithEmailAndPassword} from '../../../Firebase/auth';
-const SignUp : React.FC <ITranslation> = ({t}) => {
-    const navigate = useNavigate();
+import { doCreateUserWithEmailAndPassword } from '../../../Firebase/auth';
+const SignUp: React.FC<ITranslation> = ({ t }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
-    const onAuthLogUp = (values: UserInput) => {
-      setLoading(true);
-      doCreateUserWithEmailAndPassword(values.email, values.password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(userCredential);
-          setStoredToken(user?.accessToken);
-          setStoredUser(values.name);
-          dispatch(setCurrentUser(values));
-          message.success(t.successLog + ' ' + values.name);
-          navigate('/profile');
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          message.error(error.message);
-          setLoading(false);
-        });
-    };
+  const onAuthLogUp = (values: UserInput) => {
+    setLoading(true);
+    doCreateUserWithEmailAndPassword(values.email, values.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(userCredential);
+        setStoredToken(user?.accessToken);
+        setStoredUser(values.name);
+        dispatch(setCurrentUser(values));
+        message.success(t.successLog + ' ' + values.name);
+        navigate('/profile');
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error(error.message);
+        setLoading(false);
+      });
+  };
   return (
     <>
       <div className='logUp'>
@@ -121,6 +124,6 @@ const SignUp : React.FC <ITranslation> = ({t}) => {
       </div>
     </>
   );
-}
+};
 
-export default SignUp
+export default SignUp;

@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .articles {
   .section-header {
     // background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../../assets/pexels-vlada-karpovich-4050347.jpg);
@@ -49,18 +51,19 @@
           }
         }
         .title-card {
-          margin-top: 20px;
+          margin-top: 25px;
           h1 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
           }
         }
         .desc {
-          margin-top: 10px;
+          margin-top: 5px;
           font-size: 16px;
+          color: $gray-200;
           font-weight: 400;
-          line-height: 32px;
-          letter-spacing: 1.5px;
+          line-height: 1.5em;
+          letter-spacing: 1.25px;
         }
       }
     }

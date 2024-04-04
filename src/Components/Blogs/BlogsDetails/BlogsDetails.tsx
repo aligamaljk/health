@@ -11,23 +11,26 @@ const BlogsDetails: React.FC<ITranslation> = ({ t }) => {
   const { currentLang } = useSelector(
     (state: StoreType) => state?.user
   );
-  
+
   const { id } = useParams();
   // console.log(id);
-  
+
   const [idPage, setIdPage] = useState<number | undefined>(
     Number(id)
   );
   const [load, setLoad] = useState<boolean>(true);
-  const [articlese, setArticles] = useState <ArticleType[]>([]);
+  const [articlese, setArticles] = useState<ArticleType[]>([]);
   console.log(idPage);
-   const getDate = async () => {
+  const getDate = async () => {
     setLoad(true);
     const articles = collection(db, 'articles');
-    const data = await getDocs(articles)
-    console.log(data, "data");
-    
-    const allData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    const data = await getDocs(articles);
+    console.log(data, 'data');
+
+    const allData = data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    }));
     setLoad(false);
     setArticles(allData);
     console.log(allData);
@@ -37,9 +40,9 @@ const BlogsDetails: React.FC<ITranslation> = ({ t }) => {
   }, []);
   const dataDetails = articlese?.find(
     (article: ArticleType) => article.id == id
-  )
+  );
   console.log(dataDetails);
-  
+
   const data = currentLang === 'en' ? articlesEn : articlesAr;
   const foundArticle = data?.find(
     (article: ArticleType) => article.id == idPage
@@ -58,23 +61,31 @@ const BlogsDetails: React.FC<ITranslation> = ({ t }) => {
         preview={false}
         src={foundArticle?.image || dataDetails?.image}
       />
-      <h1>{foundArticle?.title || currentLang === 'en' ? dataDetails?.titleEn : dataDetails?.titleAr}</h1>
+      <h1>
+        {foundArticle?.title || currentLang === 'en' ?
+          dataDetails?.titleEn
+        : dataDetails?.titleAr}
+      </h1>
       <div className='des'>
-        <div dangerouslySetInnerHTML={{ __html: htmlString }}>
-
-        </div>
+        <div dangerouslySetInnerHTML={{ __html: htmlString }}></div>
         <p>
-          {
-            currentLang === 'en' ? dataDetails?.descriptionEn : dataDetails?.descriptionAr
-          }
+          {currentLang === 'en' ?
+            dataDetails?.descriptionEn
+          : dataDetails?.descriptionAr}
         </p>
       </div>
       <div className='auth'>
         <h3>
-          {t.author}:<span> {foundArticle?.author || currentLang === 'en' ? dataDetails?.authorEn : dataDetails?.authorAr}</span>
+          {t.author}:
+          <span>
+            {' '}
+            {foundArticle?.author || currentLang === 'en' ?
+              dataDetails?.authorEn
+            : dataDetails?.authorAr}
+          </span>
         </h3>
         <h3>
-          {t.date}: <span>{foundArticle?.date || "22/10/2022" }</span>
+          {t.date}: <span>{foundArticle?.date || '22/10/2022'}</span>
         </h3>
       </div>
       <div className='pag'>
