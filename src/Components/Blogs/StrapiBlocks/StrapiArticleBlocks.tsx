@@ -1,5 +1,6 @@
 import {
   CodeType,
+  ContentType,
   HeadingType,
   ImageType,
   LinkType,
@@ -9,6 +10,8 @@ import {
   QuoteType,
   TextType
 } from '../../../types/articleBlocksTypes';
+import { v4 as uuid } from 'uuid';
+import './StrapiArticleBlocks.scss';
 
 // ======================================================================
 // console.log(
@@ -22,9 +25,18 @@ import {
 // );
 // output: <span className=" underline italic bold">asldsjfldsaslf</span>
 // ======================================================================
-export function TextBlock({ obj }: { obj: TextType }) {
+export function TextBlock({
+  obj,
+  disabled
+}: {
+  obj: TextType;
+  disabled?: boolean;
+}) {
   let classNames = '';
   if (obj.type === 'text') {
+    if (disabled) {
+      return obj.text;
+    }
     for (const key in obj) {
       if (key !== 'type' && key !== 'text') {
         classNames = classNames + ' ' + key;
@@ -56,12 +68,23 @@ export function TextBlock({ obj }: { obj: TextType }) {
 // );
 // output: <a href="https://google.com">asjgladhslgadhsflads</a>
 // ==============================================================
-export function LinkBlock({ obj }: { obj: LinkType }) {
+export function LinkBlock({
+  obj,
+  disabled
+}: {
+  obj: LinkType;
+  disabled?: boolean;
+}) {
   if (obj.type === 'link') {
+    if (disabled) {
+      return obj.children.map((el) => {
+        return <TextBlock obj={el} key={uuid()} disabled={true} />;
+      });
+    }
     return (
-      <a href={obj.url}>
+      <a href={obj.url} target='_blank'>
         {obj.children.map((el) => {
-          return <TextBlock obj={el} />;
+          return <TextBlock obj={el} key={uuid()} />;
         })}
       </a>
     );
@@ -70,12 +93,18 @@ export function LinkBlock({ obj }: { obj: LinkType }) {
   return '';
 }
 
-export function ChildBlock({ obj }: { obj: TextType | LinkType }) {
+export function ChildBlock({
+  obj,
+  disabled
+}: {
+  obj: TextType | LinkType;
+  disabled?: boolean;
+}) {
   if (obj.type === 'link') {
-    return <LinkBlock obj={obj} />;
+    return <LinkBlock obj={obj} disabled={disabled} />;
   }
   if (obj.type === 'text') {
-    return <TextBlock obj={obj} />;
+    return <TextBlock obj={obj} disabled={disabled} />;
   }
 
   return '';
@@ -131,7 +160,7 @@ export function ParagraphBlock({ obj }: { obj: ParagraphType }) {
     return (
       <p>
         {obj.children.map((el) => (
-          <ChildBlock obj={el} />
+          <ChildBlock obj={el} key={uuid()} />
         ))}
       </p>
     );
@@ -186,7 +215,7 @@ export function QuoteBlock({ obj }: { obj: QuoteType }) {
       <div className='quote-wrapper'>
         <q>
           {obj.children.map((el) => (
-            <ChildBlock obj={el} />
+            <ChildBlock obj={el} key={uuid()} disabled={true} />
           ))}
         </q>
       </div>
@@ -202,7 +231,7 @@ export function CodeBlock({ obj }: { obj: CodeType }) {
       <div className='code-wrapper'>
         <code>
           {obj.children.map((el) => (
-            <TextBlock obj={el} />
+            <TextBlock obj={el} key={uuid()} disabled={true} />
           ))}
         </code>
       </div>
@@ -217,7 +246,7 @@ function ListItemBlock({ obj }: { obj: ListItemType }) {
     return (
       <li>
         {obj.children.map((el) => (
-          <ChildBlock obj={el} />
+          <ChildBlock obj={el} key={uuid()} />
         ))}
       </li>
     );
@@ -327,7 +356,7 @@ export function ListBlock({ obj }: { obj: ListType }) {
     return (
       <ol>
         {obj.children.map((el) => (
-          <ListItemBlock obj={el} />
+          <ListItemBlock obj={el} key={uuid()} />
         ))}
       </ol>
     );
@@ -336,7 +365,7 @@ export function ListBlock({ obj }: { obj: ListType }) {
     return (
       <ul>
         {obj.children.map((el) => (
-          <ListItemBlock obj={el} />
+          <ListItemBlock obj={el} key={uuid()} />
         ))}
       </ul>
     );
@@ -388,7 +417,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
         return (
           <h1>
             {obj.children.map((el) => (
-              <ChildBlock obj={el} />
+              <ChildBlock obj={el} key={uuid()} />
             ))}
           </h1>
         );
@@ -396,7 +425,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
         return (
           <h2>
             {obj.children.map((el) => (
-              <ChildBlock obj={el} />
+              <ChildBlock obj={el} key={uuid()} />
             ))}
           </h2>
         );
@@ -404,7 +433,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
         return (
           <h3>
             {obj.children.map((el) => (
-              <ChildBlock obj={el} />
+              <ChildBlock obj={el} key={uuid()} />
             ))}
           </h3>
         );
@@ -412,7 +441,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
         return (
           <h4>
             {obj.children.map((el) => (
-              <ChildBlock obj={el} />
+              <ChildBlock obj={el} key={uuid()} />
             ))}
           </h4>
         );
@@ -420,7 +449,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
         return (
           <h5>
             {obj.children.map((el) => (
-              <ChildBlock obj={el} />
+              <ChildBlock obj={el} key={uuid()} />
             ))}
           </h5>
         );
@@ -428,7 +457,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
         return (
           <h6>
             {obj.children.map((el) => (
-              <ChildBlock obj={el} />
+              <ChildBlock obj={el} key={uuid()} />
             ))}
           </h6>
         );
@@ -457,7 +486,7 @@ export function HeadingBlock({ obj }: { obj: HeadingType }) {
 //   />
 // </div>;
 // ==============================================================
-export function ImgBlock({ obj }: { obj: ImageType }) {
+export function ImgageBlock({ obj }: { obj: ImageType }) {
   if (obj.type === 'image') {
     return (
       <div className='image-block-wrapper'>
@@ -466,4 +495,25 @@ export function ImgBlock({ obj }: { obj: ImageType }) {
     );
   }
   return '';
+}
+
+export function IdentifyBlockContent({ arr }: { arr: ContentType }) {
+  return arr.map((item) => {
+    switch (item.type) {
+      case 'paragraph':
+        return <ParagraphBlock obj={item} key={uuid()} />;
+      case 'heading':
+        return <HeadingBlock obj={item} key={uuid()} />;
+      case 'list':
+        return <ListBlock obj={item} key={uuid()} />;
+      case 'image':
+        return <ImgageBlock obj={item} key={uuid()} />;
+      case 'quote':
+        return <QuoteBlock obj={item} key={uuid()} />;
+      case 'code':
+        return <CodeBlock obj={item} key={uuid()} />;
+      default:
+        return null;
+    }
+  });
 }

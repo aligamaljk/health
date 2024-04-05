@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { ArticlesType } from '../../../types/articleBlocksTypes';
+import { ArticleSummaryType } from '../../../types/articleBlocksTypes';
 import { StoreType } from '../../../types';
 import { useNavigate } from 'react-router-dom';
 import { Image, Card } from 'antd';
@@ -8,7 +8,7 @@ import { getNWords } from '../../../utils/helpers';
 export function CardArticleInArabic({
   item
 }: {
-  item: ArticlesType;
+  item: ArticleSummaryType;
 }) {
   const navigate = useNavigate();
   const data = item.attributes.localizations.data;
@@ -26,8 +26,8 @@ export function CardArticleInArabic({
       <div className='img'>
         <Image
           preview={false}
-          src={`${import.meta.env.VITE_STRAPI_BASE_URL}${item.attributes.coverPhoto.data.attributes.url}`}
-          alt={attributes.coverPhoto.data.attributes.name}
+          src={`${import.meta.env.VITE_STRAPI_BASE_URL}${data[0].attributes.coverPhoto.data.attributes.url}`}
+          alt={data[0].attributes.coverPhoto.data.attributes.name}
         />
       </div>
       <div className='title-card'>
@@ -45,7 +45,7 @@ export function CardArticleInArabic({
 export function CardArticleInEnglish({
   item
 }: {
-  item: ArticlesType;
+  item: ArticleSummaryType;
 }) {
   const navigate = useNavigate();
   return (
@@ -73,12 +73,20 @@ export function CardArticleInEnglish({
   );
 }
 
-export function ArticleCards({ data }: { data: ArticlesType[] }) {
+export function ArticleCards({
+  data
+}: {
+  data: ArticleSummaryType[];
+}) {
   const { currentLang } = useSelector(
     (state: StoreType) => state?.user
   );
 
   return currentLang === 'en' ?
-      data.map((ele) => <CardArticleInEnglish item={ele} />)
-    : data.map((ele) => <CardArticleInArabic item={ele} />);
+      data.map((ele) => (
+        <CardArticleInEnglish item={ele} key={ele.id} />
+      ))
+    : data.map((ele) => (
+        <CardArticleInArabic item={ele} key={ele.id} />
+      ));
 }

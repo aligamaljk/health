@@ -9,3 +9,13 @@ export function getNWords(str: string, numberOfWords: number) {
 
   return res + '...';
 }
+
+export function formatDateEng(isoString: string) {
+  const date = new Date(isoString);
+  return new Intl.DateTimeFormat('en-Uk').format(date);
+}
+
+export function formatDateAr(isoString: string) {
+  const date = new Date(isoString);
+  return new Intl.DateTimeFormat('ar-EG').format(date);
+}

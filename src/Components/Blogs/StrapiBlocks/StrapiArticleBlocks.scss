@@ -1,0 +1,21 @@
+@import '../../../styles/variables';
+
+.code {
+  background-color: $black-100;
+  color: $purple-50;
+  padding: 5px 8px;
+  border-radius: 8px;
+  margin-inline: 5px;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.bold {
+  font-weight: 700;
+}

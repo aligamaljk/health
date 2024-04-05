@@ -28,7 +28,7 @@ const Articles: React.FC<ITranslation> = ({ t }) => {
     queryFn: getArticles
   });
 
-  console.log(articlesData);
+  // console.log(articlesData);
   // console.log(isLoading);
   // console.log(isError);
   // console.log(error);

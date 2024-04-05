@@ -1,100 +1,134 @@
-import React, { useEffect, useState } from 'react';
-import { Image, Pagination, Skeleton } from 'antd';
-import { ArticleType, ITranslation, StoreType } from '../../../types';
+import React, { useEffect, useRef } from 'react';
+import { Empty, Image, Pagination, Skeleton, message } from 'antd';
+import { ITranslation, StoreType } from '../../../types';
 import './BlogsDetails.scss';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { articlesAr, articlesEn } from '../../../Data/Data';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../Firebase/Firebase';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { findArticle } from '../../../services/Strapi/getArticles';
+import { formatDateAr, formatDateEng } from '../../../utils/helpers';
+import { IdentifyBlockContent } from '../StrapiBlocks/StrapiArticleBlocks';
+import '../../../styles/_fonts.scss';
+
 const BlogsDetails: React.FC<ITranslation> = ({ t }) => {
   const { currentLang } = useSelector(
     (state: StoreType) => state?.user
   );
 
   const { id } = useParams();
-  // console.log(id);
+  const articlePageId = Number(id);
+  const navigate = useNavigate();
+  const { data, isError, error, isLoading } = useQuery({
+    queryKey: ['article', articlePageId],
+    queryFn: () => findArticle(articlePageId)
+  });
 
-  const [idPage, setIdPage] = useState<number | undefined>(
-    Number(id)
-  );
-  const [load, setLoad] = useState<boolean>(true);
-  const [articlese, setArticles] = useState<ArticleType[]>([]);
-  console.log(idPage);
-  const getDate = async () => {
-    setLoad(true);
-    const articles = collection(db, 'articles');
-    const data = await getDocs(articles);
-    console.log(data, 'data');
+  const langRef = useRef<'ar' | 'en'>(currentLang);
 
-    const allData = data.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id
-    }));
-    setLoad(false);
-    setArticles(allData);
-    console.log(allData);
-  };
   useEffect(() => {
-    getDate();
-  }, []);
-  const dataDetails = articlese?.find(
-    (article: ArticleType) => article.id == id
-  );
-  console.log(dataDetails);
+    if (data && currentLang !== langRef.current) {
+      console.log('triggered');
+      const { articleIds } = data;
+      const articleArId =
+        articleIds[0].attributes?.localizations?.data[0]?.id;
+      const articleEnId = articleIds[0]?.id;
+      console.log(articleArId, 'articleArId');
+      console.log(articleEnId, 'articleEnId');
 
-  const data = currentLang === 'en' ? articlesEn : articlesAr;
-  const foundArticle = data?.find(
-    (article: ArticleType) => article.id == idPage
-  );
-  const htmlString = foundArticle?.content.join('') || '';
-  if (load) {
+      navigate(
+        `/articles/${
+          langRef.current === 'en' ? articleArId : articleEnId
+        }`
+      );
+      langRef.current = currentLang;
+    }
+  }, [currentLang, data]);
+
+  if (isLoading) {
     return (
-      <div className='blogs-details'>
+      <div
+        className='blog-details'
+        style={{
+          gap: '50px',
+          paddingBlock: '75px',
+          padding: '100px 200px'
+        }}
+      >
+        <Skeleton active />
+        <Skeleton active />
         <Skeleton active />
       </div>
     );
   }
+
+  if (isError || !data) {
+    return (
+      <>
+        {message.error(error?.message ?? 'Something went wrong')}
+        <div className='blogs-details'>
+          <div
+            className='empty-error'
+            style={{ padding: '100px 0px' }}
+          >
+            <Empty />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const { articleData } = data;
+  console.log(articleData);
+
   return (
-    <div className='blogs-details'>
+    <div
+      className={`blog-details  ${
+        currentLang === 'en' ? 'roboto' : 'noto'
+      }`}
+    >
+      <div className='container'>
+        <h1 id='title'>{articleData.attributes.title}</h1>
+      </div>
       <Image
         preview={false}
-        src={foundArticle?.image || dataDetails?.image}
+        src={`${import.meta.env.VITE_STRAPI_BASE_URL}${articleData.attributes.coverPhoto.data.attributes.url}`}
+        alt={articleData.attributes.coverPhoto.data.attributes.name}
       />
-      <h1>
-        {foundArticle?.title || currentLang === 'en' ?
-          dataDetails?.titleEn
-        : dataDetails?.titleAr}
-      </h1>
-      <div className='des'>
-        <div dangerouslySetInnerHTML={{ __html: htmlString }}></div>
-        <p>
-          {currentLang === 'en' ?
-            dataDetails?.descriptionEn
-          : dataDetails?.descriptionAr}
-        </p>
-      </div>
-      <div className='auth'>
-        <h3>
-          {t.author}:
-          <span>
-            {' '}
-            {foundArticle?.author || currentLang === 'en' ?
-              dataDetails?.authorEn
-            : dataDetails?.authorAr}
-          </span>
-        </h3>
-        <h3>
-          {t.date}: <span>{foundArticle?.date || '22/10/2022'}</span>
-        </h3>
-      </div>
-      <div className='pag'>
-        <Pagination
-          responsive={true}
-          defaultCurrent={idPage}
-          total={50}
-          onChange={(page) => setIdPage(page)}
-        />
+      <div className='container'>
+        <div className='des'>
+          <IdentifyBlockContent
+            arr={articleData.attributes.content}
+          />
+        </div>
+        <div className='auth'>
+          <h4>
+            {t.author}: <span>{articleData.attributes.author}</span>
+          </h4>
+          <h4>
+            {t.date}:
+            <span>
+              {currentLang === 'en' ?
+                formatDateEng(articleData.attributes.publishedAt)
+              : formatDateAr(articleData.attributes.publishedAt) ??
+                '2024/01/01'
+              }
+            </span>
+          </h4>
+        </div>
+        <div className='pag'>
+          <Pagination
+            responsive={true}
+            // defaultCurrent={idPage}
+            defaultCurrent={articlePageId ?? 1}
+            total={50}
+            onChange={(page) => {
+              // setIdPage(page);
+              console.log(page);
+              navigate(`/articles/1`);
+            }}
+          />
+        </div>
       </div>
     </div>
   );

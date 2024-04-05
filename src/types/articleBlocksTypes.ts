@@ -62,7 +62,7 @@ export interface ImageType {
   };
 }
 
-type ContentType = (
+export type ContentType = (
   | ParagraphType
   | HeadingType
   | ListType
@@ -71,7 +71,7 @@ type ContentType = (
   | ImageType
 )[];
 
-export interface ArticlesType {
+export interface ArticleSummaryType {
   id: number;
   attributes: {
     title: string;
@@ -86,7 +86,8 @@ export interface ArticlesType {
       };
     };
     localizations: {
-      data: []
+      data:
+        | []
         | [
             {
               id: number;
@@ -109,7 +110,7 @@ export interface ArticlesType {
   };
 }
 
-export interface OneArticleType {
+export interface ArticleType {
   id: number;
   attributes: {
     title: string;
@@ -124,6 +125,34 @@ export interface OneArticleType {
           url: string;
         };
       };
+    };
+  };
+}
+
+export type ArticleBothLangIdsAfterFetechedType = [
+  {
+    id: number;
+    attributes: {
+      localizations: {
+        data: [
+          {
+            id: number;
+            attributes: {};
+          }
+        ];
+      };
+    };
+  }
+];
+
+export interface ArticleBothLangIdsType {
+  data: [] | ArticleBothLangIdsAfterFetechedType;
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
     };
   };
 }
