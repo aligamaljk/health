@@ -26,7 +26,7 @@ export function CardArticleInArabic({
       <div className='img'>
         <Image
           preview={false}
-          src={`${import.meta.env.VITE_STRAPI_BASE_URL}${data[0].attributes.coverPhoto.data.attributes.url}`}
+          src={data[0].attributes.coverPhoto.data.attributes.url}
           alt={data[0].attributes.coverPhoto.data.attributes.name}
         />
       </div>
@@ -58,7 +58,7 @@ export function CardArticleInEnglish({
       <div className='img'>
         <Image
           preview={false}
-          src={`${import.meta.env.VITE_STRAPI_BASE_URL}${item.attributes.coverPhoto.data.attributes.url}`}
+          src={item.attributes.coverPhoto.data.attributes.url}
           alt={item.attributes.coverPhoto.data.attributes.name}
         />
       </div>

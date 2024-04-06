@@ -92,7 +92,7 @@ const BlogsDetails: React.FC<ITranslation> = ({ t }) => {
       </div>
       <Image
         preview={false}
-        src={`${import.meta.env.VITE_STRAPI_BASE_URL}${articleData.attributes.coverPhoto.data.attributes.url}`}
+        src={articleData.attributes.coverPhoto.data.attributes.url}
         alt={articleData.attributes.coverPhoto.data.attributes.name}
       />
       <div className='container'>

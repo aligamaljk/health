@@ -45,7 +45,6 @@ export async function findArticle(id: number) {
       }
     )
     .then(async (res) => {
-      // console.log(res.data.data);
       if (
         !res.data.data ||
         !res.data.data.id ||
@@ -65,7 +64,6 @@ export async function findArticle(id: number) {
       }
 
       throw new Error(e.message);
-      // return e.message;
     });
 
   return res;
@@ -85,8 +83,6 @@ export async function getBothArticleLangIds(articlePageId: number) {
     })
 
     .then((res) => {
-      // console.log(res.data.data, 'before');
-      // console.log(requestId, 'before');
       if (
         !res.data.data[0] || // Check if res.data.data[0] is undefined
         typeof res.data.data[0].id !== 'number' ||
@@ -96,16 +92,11 @@ export async function getBothArticleLangIds(articlePageId: number) {
       ) {
         throw new Error('The translated article was not found');
       }
-      // console.log(res.data.data);
-      // console.log(requestId);
       return res.data.data;
     })
     .catch((e) => {
       console.error(e.message);
       throw new Error(e.message);
-      // return e.message;
     });
-  // console.log('===res===');
-  // console.log(res);
   return res;
 }

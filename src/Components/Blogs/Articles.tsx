@@ -1,18 +1,9 @@
 import React from 'react';
-import { ITranslation, StoreType } from '../../types';
-import {
-  Card,
-  Empty,
-  Image,
-  Pagination,
-  message,
-  Skeleton
-} from 'antd';
+import { ITranslation } from '../../types';
+import { Card, Empty, Pagination, message, Skeleton } from 'antd';
 import './Articles.scss';
 import { Link } from 'react-router-dom';
 import { IoIosArrowForward } from 'react-icons/io';
-// import { collection, getDocs } from 'firebase/firestore';
-// import { db } from '../../Firebase/Firebase';
 import { getArticles } from '../../services/Strapi/getArticles';
 import { useQuery } from '@tanstack/react-query';
 import { ArticleCards } from './ArticleCards/GetEquivalentArticles';
@@ -86,48 +77,6 @@ const Articles: React.FC<ITranslation> = ({ t }) => {
               />
             </>
           }
-
-          {/* <div className='cards'>
-            {(currentLang === 'en' ? articlesEn : articlesAr)?.map(
-              (item) => (
-                <Card
-                  key={item?.id}
-                  className='card'
-                  onClick={() => navigate(`/articles/${item?.id}`)}
-                  hoverable
-                >
-                  <div className='img'>
-                    <Image preview={false} src={item?.image} />
-                  </div>
-                  <div className='title-card'>
-                    <h1>{item?.title}</h1>
-                  </div>
-                  <div className='desc'>
-                    {item?.desShow
-                      .split(' ')
-                      .reduce((acc, cur, i) => {
-                        // Enter the length of words to display like here    : 9
-                        if (cur !== ' ' && i < 9) {
-                          return (acc = acc + ' ' + cur);
-                        }
-                        return acc;
-                      }, '')}
-                    
-                  </div>
-                </Card>
-              )
-            )}
-          </div>
-          <Pagination
-            responsive={true}
-            defaultCurrent={1}
-            total={10}
-            style={{
-              justifyContent: 'center',
-              margin: '20px 0 50px',
-              display: 'flex'
-            }}
-          /> */}
         </div>
       </div>
     </>
