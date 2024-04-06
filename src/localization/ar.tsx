@@ -215,5 +215,5 @@ export default {
   addArticleEn: 'اضافه المقال باللغة الانجليزية',
   addArticleEnRequired: 'الرجاء أدخال المقال باللغة الانجليزية',
   addArticleAr: 'اضافه المقال باللغة العربية',
-  addArticleArRequired: 'الرجاء أدخال المقال باللغة العربية',
+  addArticleArRequired: 'الرجاء أدخال المقال باللغة العربية'
 };

@@ -23,10 +23,10 @@ const AddSport = ({
   };
   const onFinish = (values: any) => {
     console.log(values, 'values');
-   setSports([
-     ...(sports || []),
-     { value: (sports?.length || 0) + 1, label: values.sport }
-   ]);
+    setSports([
+      ...(sports || []),
+      { value: (sports?.length || 0) + 1, label: values.sport }
+    ]);
     // setStoredAddSport([...sports,{value:countSports.length + 1,label:values.sport}])
     // setStoredAddSport([...sports,{value:countSports.length + 1,label:values.sport}])
 

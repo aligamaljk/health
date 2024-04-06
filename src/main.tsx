@@ -13,7 +13,13 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000
+    }
+  }
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <>

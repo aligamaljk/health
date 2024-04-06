@@ -109,18 +109,20 @@ const HeaderApp: React.FC<ITranslation> = ({ t }) => {
     }
   ];
   const logOut = () => {
-    doSignOut().then(() => {
-      clearStoredToken();
-      clearStoredUser();
-      clearStoredUserProfile();
-      dispatch(setCurrentUser(null));
-      navigate('/login');
-      message.success(t.LogOutMessage);
-    }).catch((error) => {
-      console.log(error);
-      message.error(error.message);
-    })
-  }
+    doSignOut()
+      .then(() => {
+        clearStoredToken();
+        clearStoredUser();
+        clearStoredUserProfile();
+        dispatch(setCurrentUser(null));
+        navigate('/login');
+        message.success(t.LogOutMessage);
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error(error.message);
+      });
+  };
   return (
     <div className='header'>
       <div className='logo'>
@@ -282,8 +284,7 @@ const HeaderApp: React.FC<ITranslation> = ({ t }) => {
           </Button>
         </Link>
         {/* admin */}
-        {getStoredUser() === 'admin' &&
-        (
+        {getStoredUser() === 'admin' && (
           <Link to='/admin'>Admin</Link>
         )}
         {/* admin */}

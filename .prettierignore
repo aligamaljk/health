@@ -39,3 +39,5 @@ generated/
 # Ignore eslint and stylelint configuration files
 .eslintrc.js
 .stylelintrc.js
+
+/src/types/strapiArticles.ts

@@ -31,7 +31,14 @@ import {
   setStoredUserProfile
 } from '../../services/user-storage';
 import AddSport from '../AddSport/AddSport';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc
+} from 'firebase/firestore';
 import { db } from '../../Firebase/Firebase';
 const Profile: React.FC<ITranslation> = ({ t }) => {
   const navigate = useNavigate();
@@ -39,13 +46,13 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
   const getLocalProfile = getStoredUserProfile() || {};
   const [fileList, setFileList] = useState<fileType[] | []>([]);
   // console.log(fileList, "fileList");
-  
+
   // const [sports, setSports] = useState(getStoredAddSport());
   const [sports, setSports] = useState<AddSportType[]>();
   const [load, setLoad] = useState<boolean>(false);
   const [loadGet, setLoadGet] = useState<boolean>(false);
   const [profile, setProfile] = useState<userProfileType>();
-  console.log(profile, 'profile');  
+  console.log(profile, 'profile');
   useEffect(() => {
     if (getLocalProfile && getLocalProfile.image) {
       setFileList(
@@ -90,8 +97,7 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
   }) => {
     setFileList(newFileList);
   };
-;
-    const colleUser = collection(db, 'user');
+  const colleUser = collection(db, 'user');
   const onFinish = (values: userProfileType) => {
     setLoad(true);
     console.log(values, 'values-profile');
@@ -99,15 +105,16 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
       addDoc(colleUser, {
         token: getStoredToken(),
         // image: values?.userImages?.fileList[0],
-        name: values.name ,
+        name: values.name,
         age: values.age,
         categoryProduct: values.categoryProduct,
         gender: values.gender,
         height: values.height,
         weight: values.weight,
         description: values.description || '',
-        activity: sports || [],
-      }).then(() => {
+        activity: sports || []
+      })
+        .then(() => {
           setStoredUserProfile({
             image: values?.userImages,
             id: '',
@@ -117,7 +124,7 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
             gender: values.gender,
             height: values.height,
             weight: values.weight,
-            description: values.description,
+            description: values.description
           });
           message.success(t.profileRegistered);
           setLoad(false);
@@ -139,19 +146,20 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
         height: values.height,
         weight: values.weight,
         description: values.description,
-        activity: sports || [],
-      }).then(() => {
-           setStoredUserProfile({
-             image: values?.userImages,
-             id: '',
-             name: values.name,
-             age: values.age,
-             categoryProduct: values.categoryProduct,
-             gender: values.gender,
-             height: values.height,
-             weight: values.weight,
-             description: values.description
-           });
+        activity: sports || []
+      })
+        .then(() => {
+          setStoredUserProfile({
+            image: values?.userImages,
+            id: '',
+            name: values.name,
+            age: values.age,
+            categoryProduct: values.categoryProduct,
+            gender: values.gender,
+            height: values.height,
+            weight: values.weight,
+            description: values.description
+          });
           message.success('تم التعديل بنجاح');
           setLoad(false);
           navigate('/');
@@ -175,7 +183,7 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
       setLoadGet(false);
     }, 1000);
     // setLoadGet(false);
-  }
+  };
   // console.log(profile, 'filterUser');
   useEffect(() => {
     getUserProfile();
@@ -196,14 +204,15 @@ const Profile: React.FC<ITranslation> = ({ t }) => {
         message.error(error.message);
       });
   };
-    const check = (sports || profile?.activity)?.map(
-      (item: AddSportType) => item
-    );
-    // console.log(check, 'check');
-    
-  if(loadGet){
+  const check = (sports || profile?.activity)?.map(
+    (item: AddSportType) => item
+  );
+  // console.log(check, 'check');
+
+  if (loadGet) {
     return (
-      <div className='loader'
+      <div
+        className='loader'
         style={{
           display: 'flex',
           justifyContent: 'center',

@@ -12,20 +12,20 @@ const ForgotPassword: React.FC<ITranslation> = ({ t }) => {
   // const navigate = useNavigate();
   // const dispatch = useDispatch();
 
-    const onAuthForgotPassword = (values: UserInput) => {
-       const email = values?.email || '';
-      doForgetPassword(email)
-        .then(() => {
-          message.success(t.checkEmail);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      // dispatch(setCurrentUser(values));
-      // setStoredUser(values.name);
-      // message.success(t.successLog + ' ' + values.name);
-      // navigate('/profile');
-    };
+  const onAuthForgotPassword = (values: UserInput) => {
+    const email = values?.email || '';
+    doForgetPassword(email)
+      .then(() => {
+        message.success(t.checkEmail);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // dispatch(setCurrentUser(values));
+    // setStoredUser(values.name);
+    // message.success(t.successLog + ' ' + values.name);
+    // navigate('/profile');
+  };
 
   return (
     <>
@@ -85,7 +85,7 @@ const ForgotPassword: React.FC<ITranslation> = ({ t }) => {
                 rules={[{ required: true, message: t.requiredEmail }]}
               >
                 <Input placeholder={t.email} type='email' />
-                </Form.Item>
+              </Form.Item>
               <Form.Item
                 name='phone'
                 label={t.titphone}

@@ -1,12 +1,17 @@
 import {
+  CodeType,
+  ContentType,
   HeadingType,
+  ImageType,
   LinkType,
   ListItemType,
   ListType,
   ParagraphType,
   QuoteType,
   TextType
-} from '../types/StrapiBlogs';
+} from '../../../types/articleBlocksTypes';
+import { v4 as uuid } from 'uuid';
+import './StrapiArticleBlocks.scss';
 
 // ======================================================================
 // console.log(
@@ -20,9 +25,18 @@ import {
 // );
 // output: <span className=" underline italic bold">asldsjfldsaslf</span>
 // ======================================================================
-export function createText(obj: TextType) {
+export function TextBlock({
+  obj,
+  disabled
+}: {
+  obj: TextType;
+  disabled?: boolean;
+}) {
   let classNames = '';
   if (obj.type === 'text') {
+    if (disabled) {
+      return obj.text;
+    }
     for (const key in obj) {
       if (key !== 'type' && key !== 'text') {
         classNames = classNames + ' ' + key;
@@ -54,22 +68,43 @@ export function createText(obj: TextType) {
 // );
 // output: <a href="https://google.com">asjgladhslgadhsflads</a>
 // ==============================================================
-export function createLink(obj: LinkType) {
+export function LinkBlock({
+  obj,
+  disabled
+}: {
+  obj: LinkType;
+  disabled?: boolean;
+}) {
   if (obj.type === 'link') {
+    if (disabled) {
+      return obj.children.map((el) => {
+        return <TextBlock obj={el} key={uuid()} disabled={true} />;
+      });
+    }
     return (
-      <a href={obj.url}>{obj.children.map((el) => createText(el))}</a>
+      <a href={obj.url} target='_blank'>
+        {obj.children.map((el) => {
+          return <TextBlock obj={el} key={uuid()} />;
+        })}
+      </a>
     );
   }
 
   return '';
 }
 
-export function createChild(obj: TextType | LinkType) {
+export function ChildBlock({
+  obj,
+  disabled
+}: {
+  obj: TextType | LinkType;
+  disabled?: boolean;
+}) {
   if (obj.type === 'link') {
-    return createLink(obj);
+    return <LinkBlock obj={obj} disabled={disabled} />;
   }
   if (obj.type === 'text') {
-    return createText(obj);
+    return <TextBlock obj={obj} disabled={disabled} />;
   }
 
   return '';
@@ -120,9 +155,15 @@ export function createChild(obj: TextType | LinkType) {
 // };
 // output: <p><a href="https://google.com">asjgladhslgadhsflads</a> sddafdfasf <a href="https://google.com"><span class=" strikethrough underline italic bold code">asfdafasd</span></a></p>
 // ==============================================================
-export function createParagraph(obj: ParagraphType) {
+export function ParagraphBlock({ obj }: { obj: ParagraphType }) {
   if (obj.type === 'paragraph') {
-    return <p>{obj.children.map((el) => createChild(el))}</p>;
+    return (
+      <p>
+        {obj.children.map((el) => (
+          <ChildBlock obj={el} key={uuid()} />
+        ))}
+      </p>
+    );
   }
 
   return '';
@@ -168,21 +209,51 @@ export function createParagraph(obj: ParagraphType) {
 //   <a href='https://google.com'>example</a>
 // </q>;
 // ==============================================================
-export function createQuote(obj: QuoteType) {
+export function QuoteBlock({ obj }: { obj: QuoteType }) {
   if (obj.type === 'quote') {
-    return <q>{obj.children.map((el) => createChild(el))}</q>;
+    return (
+      <div className='quote-wrapper'>
+        <q>
+          {obj.children.map((el) => (
+            <ChildBlock obj={el} key={uuid()} disabled={true} />
+          ))}
+        </q>
+      </div>
+    );
   }
 
   return '';
 }
 
-function createListItem(obj: ListItemType) {
+export function CodeBlock({ obj }: { obj: CodeType }) {
+  if (obj.type === 'code') {
+    return (
+      <div className='code-wrapper'>
+        <code>
+          {obj.children.map((el) => (
+            <TextBlock obj={el} key={uuid()} disabled={true} />
+          ))}
+        </code>
+      </div>
+    );
+  }
+
+  return '';
+}
+
+function ListItemBlock({ obj }: { obj: ListItemType }) {
   if (obj.type === 'list-item') {
-    return <li>{obj.children.map((el) => createChild(el))}</li>;
+    return (
+      <li>
+        {obj.children.map((el) => (
+          <ChildBlock obj={el} key={uuid()} />
+        ))}
+      </li>
+    );
   }
   return '';
 }
-
+// ==============================================================
 // const list: ListType = {
 //   type: 'list',
 //   format: 'ordered',
@@ -279,17 +350,30 @@ function createListItem(obj: ListItemType) {
 //   </li>
 //   <li></li>
 // </ol>;
-export function createList(obj: ListType) {
+// ==============================================================
+export function ListBlock({ obj }: { obj: ListType }) {
   if (obj.format === 'ordered') {
-    return <ol>{obj.children.map((el) => createListItem(el))}</ol>;
+    return (
+      <ol>
+        {obj.children.map((el) => (
+          <ListItemBlock obj={el} key={uuid()} />
+        ))}
+      </ol>
+    );
   }
   if (obj.format === 'unordered') {
-    return <ul>{obj.children.map((el) => createListItem(el))}</ul>;
+    return (
+      <ul>
+        {obj.children.map((el) => (
+          <ListItemBlock obj={el} key={uuid()} />
+        ))}
+      </ul>
+    );
   }
 
   return '';
 }
-
+// ==============================================================
 // const headeing1: HeadingType = {
 //   type: 'heading',
 //   children: [
@@ -325,26 +409,111 @@ export function createList(obj: ListType) {
 //     <span class=' bold italic underline strikethrough code'>1</span>
 //   </a>
 // </h1>;
-
-export function createHeading(obj: HeadingType) {
+// ==============================================================
+export function HeadingBlock({ obj }: { obj: HeadingType }) {
   if (obj.type === 'heading') {
     switch (obj.level) {
       case 1:
-        return <h1>{obj.children.map((el) => createChild(el))}</h1>;
+        return (
+          <h1>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} key={uuid()} />
+            ))}
+          </h1>
+        );
       case 2:
-        return <h2>{obj.children.map((el) => createChild(el))}</h2>;
+        return (
+          <h2>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} key={uuid()} />
+            ))}
+          </h2>
+        );
       case 3:
-        return <h3>{obj.children.map((el) => createChild(el))}</h3>;
+        return (
+          <h3>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} key={uuid()} />
+            ))}
+          </h3>
+        );
       case 4:
-        return <h4>{obj.children.map((el) => createChild(el))}</h4>;
+        return (
+          <h4>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} key={uuid()} />
+            ))}
+          </h4>
+        );
       case 5:
-        return <h5>{obj.children.map((el) => createChild(el))}</h5>;
+        return (
+          <h5>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} key={uuid()} />
+            ))}
+          </h5>
+        );
       case 6:
-        return <h6>{obj.children.map((el) => createChild(el))}</h6>;
+        return (
+          <h6>
+            {obj.children.map((el) => (
+              <ChildBlock obj={el} key={uuid()} />
+            ))}
+          </h6>
+        );
       default:
         console.error('Error while createing heading element');
     }
   }
 
   return '';
+}
+// ==============================================================
+// {
+//   type: 'image',
+//   image: {
+//     name: 'Healthy-eatin-habits-fb-cover.jpg',
+//     alternativeText: 'Healthy-eatin-habits-fb-cover.jpg',
+//     url: 'http://localhost:1337/uploads/Healthy_eatin_habits_fb_cover_f68c18383b.jpg'
+//   }
+// };
+
+// Output:
+// <div className='image-block-wrapper'>
+//   <img
+//     src='http://localhost:1337/uploads/Healthy_eatin_habits_fb_cover_f68c18383b.jpg'
+//     alt='Healthy-eatin-habits-fb-cover.jpg'
+//   />
+// </div>;
+// ==============================================================
+export function ImgageBlock({ obj }: { obj: ImageType }) {
+  if (obj.type === 'image') {
+    return (
+      <div className='image-block-wrapper'>
+        <img src={obj.image.url} alt={obj.image.name} />
+      </div>
+    );
+  }
+  return '';
+}
+
+export function IdentifyBlockContent({ arr }: { arr: ContentType }) {
+  return arr.map((item) => {
+    switch (item.type) {
+      case 'paragraph':
+        return <ParagraphBlock obj={item} key={uuid()} />;
+      case 'heading':
+        return <HeadingBlock obj={item} key={uuid()} />;
+      case 'list':
+        return <ListBlock obj={item} key={uuid()} />;
+      case 'image':
+        return <ImgageBlock obj={item} key={uuid()} />;
+      case 'quote':
+        return <QuoteBlock obj={item} key={uuid()} />;
+      case 'code':
+        return <CodeBlock obj={item} key={uuid()} />;
+      default:
+        return null;
+    }
+  });
 }

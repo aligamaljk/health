@@ -1,70 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { ITranslation, StoreType } from '../../types';
-import { Card, Image, Pagination, Skeleton } from 'antd';
+import React from 'react';
+import { ITranslation } from '../../types';
+import { Card, Empty, Pagination, message, Skeleton } from 'antd';
 import './Articles.scss';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { IoIosArrowForward } from 'react-icons/io';
-import { useSelector } from 'react-redux';
-import { articlesAr, articlesEn } from '../../Data/Data';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../Firebase/Firebase';
+import { getArticles } from '../../services/Strapi/getArticles';
+import { useQuery } from '@tanstack/react-query';
+import { ArticleCards } from './ArticleCards/GetEquivalentArticles';
 
-interface ArticleType {
-  id: string;
-  titleEn: string;
-  titleAr: string;
-  descriptionEn: string;
-  descriptionAr: string;
-  image: string;
-  authorEn: string;
-  authorAr: string;
-}
 const Articles: React.FC<ITranslation> = ({ t }) => {
-  const navget = useNavigate();
-  const [load, setLoad] = useState<boolean>(true);
-  const [articles, setArticles] = useState <ArticleType[]>([]);
-  const { currentLang } = useSelector(
-    (state: StoreType) => state?.user
-  );
-  const getDate = async () => {
-    setLoad(true);
-    const articles = collection(db, 'articles');
-    const data = await getDocs(articles)
-    console.log(data, "data");
-    
-    const allData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setLoad(false);
-    setArticles(allData);
-    console.log(allData);
-  };
-  useEffect(() => {
-    getDate();
-  }, []);
-  if(load){
-    return (
-      <div className="articles">
-        <div className='container'>
-          <div className='cards'>
-          {
-            [1, 2, 3, 4, 5, 6]?.map((article) => (
-               <Card
-                 key={article}
-                 hoverable
-                 loading
-                 cover={
-                   <Skeleton.Image
-                     active
-                     style={{ width: "100% !important" }}
-                   />
-                 }
-               />
-           ))
-          }
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const {
+    data: articlesData,
+    isLoading,
+    error,
+    isError
+  } = useQuery({
+    queryKey: ['articles'],
+    queryFn: getArticles
+  });
+
+  // console.log(articlesData);
+  // console.log(isLoading);
+  // console.log(isError);
+  // console.log(error);
+
   return (
     <>
       <div className='articles'>
@@ -76,77 +35,48 @@ const Articles: React.FC<ITranslation> = ({ t }) => {
           </div>
         </div>
         <div className='container'>
-          <div className='cards'>
-            {(currentLang === 'en' ? articlesEn : articlesAr)?.map(
-              (item) => (
-                <Card
-                  key={item?.id}
-                  className='card'
-                  onClick={() => navget(`/articles/${item?.id}`)}
-                  hoverable
-                >
-                  <div className='img'>
-                    <Image preview={false} src={item?.image} />
-                  </div>
-                  <div className='title-card'>
-                    <h1>{item?.title}</h1>
-                  </div>
-                  <div className='desc'>
-                    {item?.desShow
-                      .split(' ')
-                      .reduce((acc, cur, i) => {
-                        // Enter the length of words to display like here    : 9
-                        if (cur !== ' ' && i < 9) {
-                          return (acc = acc + ' ' + cur);
-                        }
-                        return acc;
-                      }, '')}
-                    ...
-                    {/* {item?.content?.map((item : any)=>(
-                  <div key={item} dangerouslySetInnerHTML={{__html: item.slice(0,20)}} ></div>
-                ))} */}
-                  </div>
-                </Card>
-              )
-            )}
-            {
-            articles?.map((item) => (
-              <Card
-                key={item?.id}
-                className='card'
-                onClick={() => navget(`/articles/${item?.id}`)}
-                hoverable
-              >
-                <div className='img'>
-                  <Image preview={false} src={item?.image} />
-                </div>
-                <div className='title-card'>
-                  <h1>
-                    {
-                      currentLang === 'en' ? item?.titleEn : item?.titleAr
+          {isLoading ?
+            <div className='loader-container'>
+              <div className='cards'>
+                {[1, 2, 3, 4, 5, 6]?.map((article) => (
+                  <Card
+                    key={article}
+                    hoverable
+                    loading
+                    cover={
+                      <Skeleton.Image
+                        active
+                        style={{ width: '100% !important' }}
+                      />
                     }
-                    </h1>
-                    <p className='desc'>
-                      {
-                        currentLang === 'en' ? item?.descriptionEn?.slice(0, 100) : item?.descriptionAr?.slice(0, 100)
-                      }...
-                    </p>
-                </div>
-              </Card>
-            ))
-            }
-          </div>
-          <Pagination
-            responsive={true}
-            defaultCurrent={1}
-            total={10}
-            //  onChange={(page)=>setIdPage(page)}
-            style={{
-              justifyContent: 'center',
-              margin: '20px 0 50px',
-              display: 'flex'
-            }}
-          />
+                  />
+                ))}
+              </div>
+            </div>
+          : isError ?
+            <>
+              {message.error(error.message)}
+              <div className='empty-error'>
+                <Empty />
+              </div>
+            </>
+          : <>
+              <div className='cards'>
+                <ArticleCards data={articlesData} />
+              </div>
+              <Pagination
+                responsive={true}
+                defaultCurrent={1}
+                total={10}
+                //  onChange={(page)=>setIdPage(page)}
+                style={{
+                  justifyContent: 'center',
+                  margin: '20px 0 50px',
+                  display: 'flex'
+                }}
+              />
+            </>
+          }
         </div>
       </div>
     </>

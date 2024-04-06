@@ -318,16 +318,15 @@ export interface userProfileType {
   weight?: string;
 }
 
-export interface ArticleType {
-  id: number;
-  title: string;
-  author: string;
-  date: string;
-  desShow: string;
-  image: string;
-  content: string[];
-}
-
+// export interface ArticleType {
+//   id: number;
+//   title: string;
+//   author: string;
+//   date: string;
+//   desShow: string;
+//   image: string;
+//   content: string[];
+// }
 
 export interface UserInput {
   email?: string;

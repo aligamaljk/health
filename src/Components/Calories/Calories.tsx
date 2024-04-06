@@ -35,13 +35,13 @@ const Calories: React.FC<ITranslation> = ({ t }) => {
     setMore(more);
     setBmr((10 * weight + 6.25 * height - 5 * age) * exercise);
 
-    setBmLess(bmr  );
+    setBmLess(bmr);
     // if (burn === 'more' || burn === 'week') {
-      // setCaloriesMor({
-      //   carbs: (bmr * 25) / 100 / 4,
-      //   protein: (bmr * 40) / 100 / 4,
-      //   fat: (bmr * 35) / 100 / 9
-      // });
+    // setCaloriesMor({
+    //   carbs: (bmr * 25) / 100 / 4,
+    //   protein: (bmr * 40) / 100 / 4,
+    //   fat: (bmr * 35) / 100 / 9
+    // });
     // } else if (burn === 'medium' || burn === 'less') {
     //   setCaloriesMed({
     //     carbs: (bmr * 40) / 100 / 4,
