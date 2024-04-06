@@ -4,6 +4,10 @@
 
 > Sihtk Bilamsa is a platform that helps you lead a healthy lifestyle. With our tools, you can track physical activity and set goals. Our mission is to create a community of people passionate about health and enable individuals to lead a healthy lifestyle.
 
+## See Live Demo!
+
+Check out the Live demo [**click here.**](https://sihtk-bilamsa.vercel.app/)
+
 ## See Project Presentaion!
 
 Check out the project presentation video on YouTube [click here.](https://youtu.be/GGssrN39jmo)
