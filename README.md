@@ -19,6 +19,7 @@ Check Google Slides file [here.](https://docs.google.com/presentation/d/17OP82Dh
 - **Sports Activity Tracking:** Allows users to record and track various sports activities such as walking, running, cycling, and more.
 - **Setting Health Goals:** Users can set personal health goals and track their progress towards achieving these goals.
 - **Providing Health Tips and Resources:** Offering articles and educational resources on health and wellness to help users make better health decisions.
+- **BMI and Calories Calculation:** Offering a calculator for the calories and Knowing your BMI.
 - **Reminders and Scheduling:** Ability to set reminders for meals, water intake, and exercise sessions to help users adhere to a healthy routine.
 
 ## See Project Prototype!
@@ -50,6 +51,9 @@ Collaborating with unfamiliar team members within a restricted timeline presente
 - axios
 - react-router-dom
 - react-icons
+- firebase
+- react-query
+- uuid
 - vite
 
 ## Getting Started
